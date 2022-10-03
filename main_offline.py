@@ -5,8 +5,6 @@ import os
 import platform
 import subprocess
 import sys
-import numpy as np
-import pandas as pd
 import Hrcn_SCUC
 import conda
 
@@ -76,64 +74,41 @@ RH.transmission_line_failure_visu(Linefailure, time_interval, boundary)
 RH.creating_video()
 RH.playing_video()
 
-print(f'-------------------------------------------------------\n'
-      f'Line Failure Calculation Processing Time: {time.time() - start_time}sec')
 
-# time. sleep(10)
+# time. sleep(10) 
 
 
-print(
-    '################################################################################################################')
-print(
-    '###############################  Optimal operation of the impacted power system...  ############################')
-print(
-    '################################################################################################################')
-
-# from os import chdir, getcwd
+print('################################################################################################################')
+print('###############################  Optimal operation of the impacted power system...  ############################')
+print('################################################################################################################')
 
 conda_file_dir = conda.__file__
 conda_dir = conda_file_dir.split('lib')[0]
 proj_lib = os.path.join(os.path.join(conda_dir, 'Library'), 'share')
 os.environ["PROJ_LIB"] = proj_lib
 
-Power_system = '2K system_full.xlsx'
-Load_factor = 'PS_loadfactor.txt'
-TIme0 = np.array(range(0, 24))  # the hours for this network configuration
+Alfa = input('Line outage probability threshold (choose a value from the set:{0.1,0.5,0.9}: ')
+Alfa = float(Alfa)  
 
-LnFlrPrblty = Linefailure + '.json'
 path1 = os.getcwd()
-LineFailureProbability = os.path.join(path1, outputfd, LnFlrPrblty)
-
+folder_name = 'Input_offline'
 image_folder = 'Images_ps'
+path = os.path.join(path1, folder_name)
+os.makedirs(path, exist_ok=True)
 
 path2 = os.path.join(path1, image_folder)
+item_lsh = 'LoadShedding'+str(int(10*Alfa))+'.xlsx'
+in_ps = os.path.join(path, item_lsh)
 
-Alfa = input('Line outage probability threshold (choose a value between 0 and 1, smaller value is more conservative): ')
-alfa = float(Alfa)
+PH = Hrcn_SCUC.HurricaneSCUC('Result_ps',image_folder)
 
-PH = Hrcn_SCUC.HurricaneSCUC('Result_ps', image_folder)
-
-if 0 < alfa < 1:
-    Load_Shedding, item_lsh, Summery = PH.Opt_operation(Power_system, Load_factor, LineFailureProbability, TIme0, alfa)
-else:
-    print('Please check the input data Alfa, the value should be between 0 and 1!')
-    sys.exit()
-
-if pd.DataFrame(Load_Shedding).empty:
-    print('No load shedding!')
-else:
+if Alfa == 0.1 or Alfa == 0.5 or Alfa == 0.9:
     print(f'Creating images in the {path2} folder! It may take a few minutes...')
-    PH.vis_img(item_lsh)
+    PH.vis_img(in_ps)
+    
+else:
+    print('Alfa value is not in set! Please choose again.')    
 
-print('###############################  Summery  ###############################')
-
-print('Total cost: ${:.2f}M'.format(Summery[0]['Solution Value'] / 1000000))
-print('Simulation time: {:.2f} seconds'.format(Summery[0]['Total Time']))
-print('Total load shedding: {:.2f} MW'.format(Summery[0]['Total Load shedding']))
-
-print('################################  Done!  ################################')
-
-# Creating and Pop up the project txt file
 with open(f'Line Failure Calculation Summary-{int(resolution)}km-{string_ts}.txt', 'w') as f:
     f.write(f'-------------------------------------------------------------------\n')
     f.write(f'------------------Line Failure Calculation Summary-----------------\n')
@@ -163,12 +138,6 @@ with open(f'Line Failure Calculation Summary-{int(resolution)}km-{string_ts}.txt
     f.write('####### Optimal operation of the impacted power system Summary #######\n')
     f.write('######################################################################\n')
     f.write('>>>>>>>>>>>>>>>>>>>>>>>>>>>> Input Files >>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n')
-    f.write('Power_system File:\n'
-            f'2K system_full.xlsx\n')
-    f.write('Load_factor: \n'
-            'PS_loadfactor.txt \n')
-    f.write('Line Failure Probability: \n'
-            f'{Linefailure}.json \n')
     f.write(f'Line outage probability threshold: \n'
             f'{alfa}')
     f.write('>>>>>>>>>>>>>>>>>>>>>>>>>>  Output Files >>>>>>>>>>>>>>>>>>>>>>>>>>>>\n')
@@ -176,11 +145,3 @@ with open(f'Line Failure Calculation Summary-{int(resolution)}km-{string_ts}.txt
             'Result_ps')
     f.write('Image Folder: \n'
             f'Result_ps\{path2}')
-
-if platform.system() == 'Darwin':  # macOS
-    subprocess.call(('open', f'Line Failure Calculation Summary-{int(resolution)}km-{string_ts}.txt'))
-elif platform.system() == 'Windows':  # Windows
-    os.startfile(f'Line Failure Calculation Summary-{int(resolution)}km-{string_ts}.txt')
-else:
-    print('Supporting Windows and Mac Platform')
-
