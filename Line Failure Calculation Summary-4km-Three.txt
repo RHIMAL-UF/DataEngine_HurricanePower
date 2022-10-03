@@ -1,0 +1,39 @@
+-------------------------------------------------------------------
+------------------Line Failure Calculation Summary-----------------
+-------------------------------------------------------------------
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>> Input Files >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+User Specified Wind Profile Resolution: 4.0
+
+Wind Speeed Input File:
+all_speedV10_R4km.mat
+Wind Angle Input File:
+all_angleV10_R4km.mat
+Power System Model:
+ InfraS_GIS.xlsx
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>  Output Files >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+All Output Folder:
+Results~Resolution- Spatial 4.0km-Temporal 3.0 Hour
+Pre-Processing File:
+Tower_GIS_R4.0km.json
+Line Failure File:
+LineFailure_P.json
+Visualization Folder:
+Threehour
+######################################################################
+####### Optimal operation of the impacted power system Summary #######
+######################################################################
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> Input Files >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Power_system File:
+2K system_full.xlsx
+Load_factor: 
+PS_loadfactor.txt 
+Line Failure Probability: 
+LineFailure_P.json 
+Line outage probability threshold: 
+0.1>>>>>>>>>>>>>>>>>>>>>>>>>>  Output Files >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Output Folder: 
+Result_psImage Folder: 
+Result_ps\C:\Users\xiao.zhu\Desktop\Code_Documents_Modified_Version\Images_ps
