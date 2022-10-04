@@ -5,7 +5,7 @@ This package contains codes of an open source data generation engine that simula
 ### Code Environment and Required Software
 The bulk part of the software is developed with the python programming language and is tested with python version 3.6. The IBM CPLEX Optimization software is required for running the codes.
 
-Check the [wiki page](https://github.com/GabyOu/DataEngine_HurricanePower/wiki/Data-Generation-Engine-Wiki-Page) for software objectives, installation guide, and user manuals.
+Check the [wiki page](https://github.com/RHIMAL-UF/DataEngine_HurricanePower/wiki/Hurricane-Power-System-Simulation-Data-Generation-Engine-Wiki-Page) for software objectives, installation guide, and user manuals.
 
 --------------------
 The development of the software is supported by National Science Foundation under award 2004658, [Elements: Open Access Data Generation Engine for Bulk Power System under Extreme Windstorms](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2004658&HistoricalAwards=false).
