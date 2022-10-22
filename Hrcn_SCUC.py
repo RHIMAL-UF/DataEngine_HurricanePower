@@ -703,12 +703,12 @@ class HurricaneSCUC:
                                     ind_mo = np.where(S[t][o]==Line_seg[:,0])[0]
                                     ind_TB = int(np.where(int(Line_seg[ind_mo,2])==Bus_seg[:])[0])
                                     ind_FB = int(np.where(int(Line_seg[ind_mo,1])==Bus_seg[:])[0])
-                                    if ind_FB == 1:
-                                        LF += -shiftfactor[ind_m,ind_TB-2]*model.FC[t,S[t][o]-1]
-                                    elif ind_TB == 1:
-                                        LF += shiftfactor[ind_m,ind_FB-2]*model.FC[t,S[t][o]-1]
+                                    if ind_FB == 0:
+                                        LF += -shiftfactor[ind_m,ind_TB-1]*model.FC[t,S[t][o]-1]
+                                    elif ind_TB == 0:
+                                        LF += shiftfactor[ind_m,ind_FB-1]*model.FC[t,S[t][o]-1]
                                     else:
-                                        LF += (shiftfactor[ind_m,ind_FB-2]-shiftfactor[ind_m,ind_TB-2])*model.FC[t,S[t][o]-1]
+                                        LF += (shiftfactor[ind_m,ind_FB-1]-shiftfactor[ind_m,ind_TB-1])*model.FC[t,S[t][o]-1]
                             
                         model.flow.cncl.add(LF == model.Fk[t,m])  
                         Done_b4[sg][m].append(t)
