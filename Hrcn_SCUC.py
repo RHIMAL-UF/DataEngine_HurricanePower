@@ -114,7 +114,14 @@ class HurricaneSCUC:
             Otg_prb[i,1:] = list(d1[r1[i]].values())
             
         return Otg_prb,ts
-
+    def try_parsing_date(self,text):
+        for fmt in ("'%m_%d_%H%M'", '%m_%d_%H%M'):
+            try:
+                return datetime.datetime.strptime(text, fmt)
+            except ValueError:
+                pass
+        raise ValueError('no valid date format found') 
+        
     #data0:Line,data1:Lines_failure probability,data2:time stamps of hurricane probability data,data3:alfa
     def scenario_gen(self, data0,data1,data2='0.9'):
 
@@ -127,12 +134,12 @@ class HurricaneSCUC:
 
         time_s = np.zeros((len(fin),3),dtype=int)
         for i in range(0,len(fin)):
-            datetime_object = datetime.datetime.strptime(fin[i], "'%m_%d_%H%M'")
+            datetime_object = self.try_parsing_date(fin[i])
             time_s[i,0] = datetime_object.month 
             time_s[i,1] = datetime_object.day 
             time_s[i,2] = datetime_object.hour
         if len(fin)>1:
-            smltn_dur = 24*((datetime.datetime.strptime(fin[-1], "'%m_%d_%H%M'")-datetime.datetime.strptime(fin[0], "'%m_%d_%H%M'")).days+1)
+            smltn_dur = 24*((self.try_parsing_date(fin[-1])-self.try_parsing_date(fin[0])).days+1)
         hrrcn_hour = np.zeros(len(time_s),dtype=int) #hours of hurricane probability as time series: 12, 18, 21, 0=24, 3=27, ...
         tm0 = np.unique(time_s[:,1]) # temperary variable for the days of hurricane to help with days in different months  
         for i in range(0,len(time_s)):
@@ -615,11 +622,24 @@ class HurricaneSCUC:
              return model.P[t,g] == model.P1[t,g]+model.P2[t,g]+model.P3[t,g]+model.P4[t,g]
         model.Ptotal = Constraint(T1,G1,rule=Ptotal_rule)
         
-        
+        model.node_balance_rule = ConstraintList()
         print('Adding network power balance constraints...')
-        def node_balance_rule(model,t):
-            return sum(model.P[t,g]-model.OVG[t,g] for g in G1) + sum(model.LSH[t,b] for b in L_bus_in)==TotalLoad[t] 
-        model.node_balance = Constraint(T1,rule=node_balance_rule) 
+        for sg in dict_B.keys():
+            Bus_seg = dict_B[sg] 
+            Gen_seg = dict_G[sg]
+
+            N_seg = (Bus_seg[:,0]-1).astype(int) 
+            G_sg = (Gen_seg[:,0]-1).astype(int)
+
+            h = int(str(sg).split(",",1)[0])
+            Load_sg = np.zeros([T,N])
+            TotalLoad_sg = np.zeros(T)
+            for t in HH2[h]:  
+                for ix,b in enumerate(N_seg): 
+                    Load_sg[t,b] = Bus_seg[ix,1]*Load_fact[t]
+            TotalLoad_sg = np.sum(Load_sg, axis=1)
+            for t in HH2[h]:
+                model.node_balance_rule.add(sum(model.P[t,g]-model.OVG[t,g] for g in G_sg) + sum(model.LSH[t,b] for b in N_seg)==TotalLoad_sg[t])
         
         print('Adding commitment constraints...')
         def Ineq9_rule(model,t,g):
