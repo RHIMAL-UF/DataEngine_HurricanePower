@@ -357,9 +357,9 @@ class HurricaneSCUC:
     def Opt_operation(self,Power_system,Load_factor,LineFailureProbability,TIme0,Alfa='0.9'):
         
         
-        ct = int(10*Alfa)    
-        # wd = os.getcwd()
-        # os.makedirs(os.path.join(wd, 'results'), exist_ok=True)
+        
+
+       
         item = 'PS_results'+str(ct)+'.xlsx'
         item_lsh = 'LoadShedding'+str(ct)+'.xlsx'
          
